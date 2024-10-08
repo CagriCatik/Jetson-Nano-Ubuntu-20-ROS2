@@ -1,0 +1,21 @@
+# Ignore all image files
+*.img.xz
+
+# Ignore shell script logs (if any are generated)
+*.log
+
+# Ignore backup or temporary files (optional)
+*.bak
+*.tmp
+*.swp
+
+# Ignore node_modules folder (in case it’s generated later)
+node_modules/
+
+# Ignore Docker files (optional)
+Dockerfile
+.dockerignore
+
+# Ignore any generated files not tracked by git
+*.out
+*.o
