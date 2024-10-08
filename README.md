@@ -2,7 +2,7 @@
 
 ## Introduction
 
-This guide provides a comprehensive, step-by-step instruction on setting up your Jetson Nano with Ubuntu 20.04. The guide covers the preparation, downloading and flashing of the image, and setting up Jetson Nano, along with troubleshooting tips and ROS2 installation.
+This guide provides a comprehensive, step-by-step instruction on setting up your Jetson Nano with Ubuntu 20.04. The guide covers the preparation, downloading and flashing of the image, and setting up Jetson Nano, along with troubleshooting tips, ROS2 installation, and additional setup scripts.
 
 ## Step 1: Gather Your Tools
 
@@ -17,25 +17,11 @@ Before you begin, make sure you have the following items:
 
 ## Step 2: Download the Image
 
-### Download the Image File
+Visit the link to download the **Jetson Nano Ubuntu 20.04 image** with pre-installed **OpenCV, TensorFlow, and PyTorch**. The file name is `JetsonNanoUb20_3b.img.xz` and it is **8.7 GB** in size. Use either **Sync** or **Google Drive** options. Google Drive has daily download limits, so use it only if Sync is slow.
 
-Visit the link to download the **Jetson Nano Ubuntu 20.04 image** with pre-installed **OpenCV, TensorFlow, and PyTorch**. The file name is `JetsonNanoUb20_3b.img.xz` and it is **8.7 GB** in size.
-
-- **Download Link**: Use either **Sync** or **Google Drive** options. Google Drive has daily download limits, so use it only if Sync is slow.
-  - [GitHub Source](https://github.com/Qengineering/Jetson-Nano-Ubuntu-20-image)
-  - [Sync Download Link](https://ln5.sync.com/dl/403a73c60/bqppm39m-mh4qippt-u5mhyyfi-nnma8c4t/view/default/14418794280004)
-  - [Google Drive Link](https://drive.google.com/file/d/1L2H_sQC_kSILrcJteWg7htKxJirtDsZ9/view)
-
-### Split Image Option (If Full Download Fails)
-
-Due to the large size, you may prefer downloading the image in parts.
-
-- **Split Files**: Download 14 smaller files named `JetsonNanoUb20_3b.img.xz.001`, `JetsonNanoUb20_3b.img.xz.002`, and so on.
-- Once downloaded, place them in a single folder and run:
-  ```
-  7z x JetsonNanoUb20_3b.img.xz.001
-  ```
-  This will extract the entire image file automatically from all the parts.
+- [GitHub Source](https://github.com/Qengineering/Jetson-Nano-Ubuntu-20-image)
+- [Sync Download Link](https://ln5.sync.com/dl/403a73c60/bqppm39m-mh4qippt-u5mhyyfi-nnma8c4t/view/default/14418794280004)
+- [Google Drive Link](https://drive.google.com/file/d/1L2H_sQC_kSILrcJteWg7htKxJirtDsZ9/view)
 
 ## Step 3: Flash the Image to SD Card
 
@@ -43,47 +29,37 @@ Due to the large size, you may prefer downloading the image in parts.
 
 - Get a **32 GB or larger** SD card. A **64 GB** or larger card is recommended for extra working space.
 
+### Install Balena Etcher
+
+To install **Balena Etcher** for flashing SD card images, run the following script:
+
+```sh
+./install-balena-etcher.sh
+```
+
 ### Flash the Image
 
-- Use a tool like **Balena Etcher** or **Raspberry Pi Imager** to flash the `.img.xz` file directly onto the SD card.
+- Use a tool like **Balena Etcher** to flash the `.img.xz` file directly onto the SD card.
   - [Download Balena Etcher](https://etcher.balena.io/#download-etcher)
 - Note: Do **not unzip** the `.img.xz` file. Flash it as is.
 
-## Step 4: Set Up Jetson Nano
+## Step 4: Expand the Partition
 
-### Insert the SD Card
+After booting, your SD card's storage may be nearly full because of all the pre-installed software. This step is optional but recommended.
 
-Insert the flashed SD card into the **Jetson Nano**.
+**Install GParted**
 
-### Connect Accessories
+- Open a terminal and run:
 
-Attach your **keyboard**, **mouse**, and **HDMI monitor**.
-
-### Power Up
-
-Plug in your power supply and wait for the Nano to boot up. The default username and password are both set to **jetson**.
-
-## Step 5: Expand the Partition (Optional but Recommended)
-
-After booting, your SD card's storage may be nearly full because of all the pre-installed software.
-
-### Install GParted
-
-Open a terminal and run:
-
-```
+```sh
 sudo apt-get install gparted
 ```
 
-### Resize the Partition
+**Resize the Partition:**
 
-Launch **GParted** and use it to extend the main partition to the full size of your SD card (recommended if you used a 64 GB or larger card).
+- Launch **GParted** and use it to extend the main partition to the full size of your SD card (recommended if you used a 64 GB or larger card).
 
-## Step 6: WiFi Setup
-
-If you plan on using WiFi, connect your WiFi adapter to one of the USB ports and follow the standard Ubuntu process to connect to your wireless network.
-
-## Step 7: Pre-installed Software
+## Step 5: Pre-installed Software
 
 This image comes pre-installed with the following tools:
 
@@ -93,7 +69,7 @@ This image comes pre-installed with the following tools:
 - **TensorRT 8.0.1.6**: Optimizing deep learning inference
 - **TeamViewer** and **Jtop**: For remote control and system monitoring
 
-## Step 8: Tips for Beginners
+## Step 6: Tips for Beginners
 
 ### First-Time Internet Connection
 
@@ -107,13 +83,13 @@ The **Chromium** browser can interfere with some system processes. Instead, use 
 
 The SD card comes filled with software (around **21 GB**). Ensure you use at least a **64 GB** card for additional storage space during your projects.
 
-## Step 9: Troubleshooting
+## Step 7: Troubleshooting
 
 ### Corrupted Vulkan Warning
 
 You might see a Vulkan-related error message during boot. To resolve it, remove the Vulkan folder:
 
-```
+```sh
 sudo rm -rf /usr/share/vulkan/icd.d
 ```
 
@@ -125,41 +101,37 @@ If importing **OpenCV** and **TensorFlow** throws an error related to memory all
 
 If an upgrade fails due to a conflicting `sleep.conf` file, follow the instructions on the linked webpage for resolution.
 
-## Optional: Headless Setup
+## Step 8: Installation Scripts
 
-If you wish to set up your Jetson Nano without a monitor (headless mode):
+Below are some helpful scripts to automate the installation of key components for your Jetson Nano setup:
 
-Run the following commands to remove the desktop environment:
+### Install Docker Engine
 
+To install **Docker Engine** for containerized application management, run:
+
+```sh
+./install-docker-engine.sh
 ```
-sudo apt purge ubuntu-desktop -y && sudo apt autoremove -y && sudo apt autoclean
-sudo apt-get remove snapd lightdm cups chromium*
+
+For more details on Docker installation, visit the official [Install Docker Engine](https://docs.docker.com/engine/install/ubuntu/) documentation.
+
+### Install ROS2
+
+For setting up **ROS2** on Jetson Nano, run:
+
+```sh
+./install-ros2.sh
 ```
 
-This will reduce the memory footprint to around **420 MB**.
+This will guide you through the process of installing the latest ROS2 version compatible with Ubuntu 20.04.
 
 ## ROS2 Setup
 
-If you want to work with **ROS** (Robot Operating System), please refer to **JetsonNano-ROS2**. The provided image should be compatible.
-
-## JetsonNano-ROS2 Guide
-
-A comprehensive guide on setting up Jetson Nano with **ROS2**:
-
-### Setup
+If you want to work with **ROS2**, this image is compatible with it. A comprehensive guide on setting up Jetson Nano with **ROS2**:
 
 Jetson Nano can be generally powered from a micro USB power supply (**5V 2A 10W max**). This can manage a keyboard, a mouse, and a small camera. If the planned use case for Jetson Nano is to run Neural Networks along with Depth cameras, it is better to power the device via the **DC barrel jack (5V 4A 20W max)**.
 
 The **system setup comparison section** contains various combinations of **Ubuntu and ROS2** that were tested with and without GUI, and with and without Docker. The main purpose was to identify the stable combination that allows for the latest ROS version to be used as well as get the maximum output from the Jetson Nano.
-
-### Recommended Installation
-
-Follow the guidelines in **Install Docker engine** to update the preinstalled Docker version.
-- [Install Docker Engine](https://docs.docker.com/engine/install/ubuntu/)
-
-## Additional Resources
-
-For further assistance, visit the official documentation page: [Install Ubuntu 20.04 on Jetson Nano](https://qengineering.eu/install-ubuntu-20.04-on-jetson-nano.html).
 
 ### Useful Links
 
