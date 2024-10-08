@@ -1,5 +1,6 @@
 # Ignore all image files
 *.img.xz
+img
 
 # Ignore shell script logs (if any are generated)
 *.log
@@ -19,3 +20,44 @@ Dockerfile
 # Ignore any generated files not tracked by git
 *.out
 *.o
+
+# Ignore Python bytecode files
+*.pyc
+*.pyo
+*.pyd
+__pycache__/
+
+# Ignore virtual environment directories
+venv/
+env/
+.venv/
+.env/
+
+# Ignore Python egg files
+*.egg
+*.egg-info/
+dist/
+build/
+
+# Ignore pipenv, poetry, and other dependency managers files
+Pipfile
+Pipfile.lock
+poetry.lock
+poetry.toml
+
+# Ignore pytest and coverage files
+.pytest_cache/
+coverage.xml
+htmlcov/
+.tox/
+.cache/
+
+# Ignore Jupyter Notebook checkpoints
+.ipynb_checkpoints/
+
+# Ignore IDE settings (for popular IDEs/editors)
+.vscode/
+.idea/
+
+# Ignore macOS system files
+.DS_Store

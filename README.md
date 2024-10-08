@@ -22,6 +22,7 @@ Visit the link to download the **Jetson Nano Ubuntu 20.04 image** with pre-insta
 - [GitHub Source](https://github.com/Qengineering/Jetson-Nano-Ubuntu-20-image)
 - [Sync Download Link](https://ln5.sync.com/dl/403a73c60/bqppm39m-mh4qippt-u5mhyyfi-nnma8c4t/view/default/14418794280004)
 - [Google Drive Link](https://drive.google.com/file/d/1L2H_sQC_kSILrcJteWg7htKxJirtDsZ9/view)
+- [JetRacer ROS Image](https://drive.usercontent.google.com/download?id=16OBLRNlrZaSkhVcC4xJ6VugtChmZw1_B&export=download&authuser=0)
 
 ## Step 3: Flash the Image to SD Card
 
@@ -42,6 +43,7 @@ To install **Balena Etcher** for flashing SD card images, run the following scri
 - Use a tool like **Balena Etcher** to flash the `.img.xz` file directly onto the SD card.
   - [Download Balena Etcher](https://etcher.balena.io/#download-etcher)
 - Note: Do **not unzip** the `.img.xz` file. Flash it as is.
+- md5sum: D738F1FE20088A1BDBD10E2358B512F7
 
 ## Step 4: Expand the Partition
 

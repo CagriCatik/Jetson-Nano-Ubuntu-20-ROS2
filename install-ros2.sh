@@ -1,53 +1,82 @@
 #!/bin/bash
 
-# This script installs ROS 2 Humble Hawksbill on Ubuntu 22.04.
+# Constants
+ROS_VERSION="foxy"  # Change this to install a different version (e.g., "humble" for Ubuntu 22.04)
+UBUNTU_VERSION=$(lsb_release -cs)  # Detects the Ubuntu codename
+WORKSPACE_DIR=~/ros2_ws
 
-# Update package index
-sudo apt update
+# Function to log messages
+log() {
+    echo -e "\e[32m$1\e[0m"
+}
 
-# Install curl if not installed
-sudo apt install curl -y
+# Function to handle errors
+handle_error() {
+    log "Error occurred at line $1 while executing command: $2"
+    exit 1
+}
 
-# Add the ROS 2 GPG key
-sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
+# Trap errors and report them
+trap 'handle_error $LINENO "$BASH_COMMAND"' ERR
 
-# Add the ROS 2 repository to sources.list
-sudo sh -c 'echo "deb [arch=amd64,arm64,armhf] http://packages.ros.org/ros2/ubuntu $(lsb_release -cs) main" > /etc/apt/sources.list.d/ros2-latest.list'
+# Function to install necessary tools and ROS 2 packages
+install_ros2() {
+    log "Updating package index..."
+    sudo apt update -y
 
-# Update package index again after adding ROS 2 repository
-sudo apt update
+    log "Installing curl if not installed..."
+    sudo apt install curl -y
 
-# Install development tools and ROS tools
-sudo apt install -y \
-    build-essential \
-    cmake \
-    git \
-    python3-colcon-common-extensions \
-    python3-pip \
-    python3-rosdep \
-    python3-vcstool \
-    wget
+    log "Adding ROS 2 GPG key..."
+    sudo curl -sSL https://raw.githubusercontent.com/ros/rosdistro/master/ros.asc | sudo apt-key add -
 
-# Install ROS 2 Humble desktop
-sudo apt install ros-humble-desktop -y
+    log "Adding ROS 2 repository to sources.list..."
+    sudo sh -c "echo 'deb [arch=amd64,arm64,armhf] http://packages.ros.org/ros2/ubuntu $UBUNTU_VERSION main' > /etc/apt/sources.list.d/ros2-latest.list"
 
-# Initialize rosdep
-sudo rosdep init
-rosdep update
+    log "Updating package index after adding ROS 2 repository..."
+    sudo apt update -y
 
-# Source ROS 2 setup.bash
-echo "source /opt/ros/humble/setup.bash" >> ~/.bashrc
-source ~/.bashrc
+    log "Installing development tools and ROS dependencies..."
+    sudo apt install -y \
+        build-essential \
+        cmake \
+        git \
+        python3-colcon-common-extensions \
+        python3-pip \
+        python3-rosdep \
+        python3-vcstool \
+        wget
 
-# Install additional RMW implementations (optional, if needed)
-sudo apt install ros-humble-rmw-fastrtps-cpp ros-humble-rmw-cyclonedds-cpp -y
+    log "Installing ROS 2 $ROS_VERSION desktop..."
+    sudo apt install ros-$ROS_VERSION-desktop -y
 
-# Install some commonly used ROS 2 packages
-sudo apt install ros-humble-demo-nodes-cpp ros-humble-demo-nodes-py -y
+    log "Initializing rosdep..."
+    sudo rosdep init || log "rosdep already initialized, skipping."
+    rosdep update
 
-# Set up colcon workspace (optional)
-mkdir -p ~/ros2_ws/src
-cd ~/ros2_ws
-colcon build
+    log "Sourcing ROS 2 $ROS_VERSION in bashrc..."
+    grep -qxF "source /opt/ros/$ROS_VERSION/setup.bash" ~/.bashrc || echo "source /opt/ros/$ROS_VERSION/setup.bash" >> ~/.bashrc
+    source ~/.bashrc
 
-echo "ROS 2 Humble installation complete."
+    log "Installing additional RMW implementations..."
+    sudo apt install -y ros-$ROS_VERSION-rmw-fastrtps-cpp ros-$ROS_VERSION-rmw-cyclonedds-cpp
+
+    log "Installing commonly used ROS 2 packages..."
+    sudo apt install -y ros-$ROS_VERSION-demo-nodes-cpp ros-$ROS_VERSION-demo-nodes-py
+}
+
+# Function to set up a colcon workspace
+setup_colcon_workspace() {
+    log "Setting up colcon workspace at $WORKSPACE_DIR..."
+    mkdir -p $WORKSPACE_DIR/src
+    cd $WORKSPACE_DIR
+    colcon build || log "Colcon workspace setup failed."
+}
+
+# Main script execution
+log "Starting ROS 2 $ROS_VERSION installation on Ubuntu $UBUNTU_VERSION..."
+
+install_ros2
+setup_colcon_workspace
+
+log "ROS 2 $ROS_VERSION installation complete."
